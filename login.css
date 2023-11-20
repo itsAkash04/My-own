@@ -1,0 +1,61 @@
+body{font-family: 'Kdam Thmor Pro', sans-serif;
+    font-family: 'Poppins', sans-serif;
+    font-family: 'Roboto', sans-serif;
+    font-family: 'Vesper Libre', serif;
+    margin: 0;
+padding: 0;           
+background-color:   grey;
+}
+ 
+form{
+background-color:rgb(31, 49, 3);
+width: 25%;
+border-radius: 5px;
+padding: 20px;
+}
+
+h2{
+    color: rgb(192, 147, 79);
+    font-size: 20px;
+    text-transform: uppercase;
+    text-align: center;
+}
+ 
+#class{
+    align-items: center;
+     height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+form label{
+    color: black;
+    font-size: 20px;    
+
+}
+form .pinky{
+    width: 100%;
+    height: 20px;
+    border: none;
+    border-radius: 5px;
+}
+#paisa{
+    width: 100%;
+    height: 100%    ;
+}
+#btn{
+    width: 30%;
+    height: 30px;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    background-color: brown;
+}
+div.can{
+    background-color: red;
+}
+i{
+position: absolute;
+top: 60%;
+left: 33%;
+}
