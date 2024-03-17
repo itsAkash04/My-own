@@ -1,0 +1,382 @@
+using System;
+using System.Threading;
+using System.Data.SqlClient;
+using System.Security.Cryptography.X509Certificates;
+
+
+public class MainClass
+{
+   
+   protected SqlConnection conn = new SqlConnection("Data Source=DESKTOP-3C498RL\\SQLEXPRESS;Initial Catalog=akashdb;Integrated Security=True");
+
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("Press 1 For Login");
+        Console.WriteLine("Press 2 For NewUser");
+        Console.WriteLine("Press 3 to Exit");
+        int n = Convert.ToInt32(Console.ReadLine());
+        if (n == 1)
+
+        {
+
+            Admin adref = new Admin();
+            adref.Login();
+        }
+        else if (n == 2)
+        {
+            NewUser nuref = new NewUser();
+            nuref.SignUp();
+        }
+        else
+        {
+            Environment.Exit(1);
+        }
+    }
+}
+
+public class Admin : MainClass
+{    public  void Login()
+    {
+       
+        
+        Console.WriteLine("Enter the UserName");
+        string userName = Console.ReadLine();
+        Console.WriteLine("Enter the Password");
+        string userPassword = Console.ReadLine();
+        conn.Open();
+        String fetch = "Select * from usr where N_name='" + userName + "' AND  N_Confirm='"+ userPassword + "'";
+        SqlCommand cmd = new SqlCommand(fetch,conn);
+        SqlDataReader rdr = cmd.ExecuteReader();
+        if (rdr.HasRows)
+        {
+         while(rdr.Read())
+            {
+                if (rdr["N_name"].Equals(userName) && rdr["N_Confirm"].Equals(userPassword))
+                {
+                    
+                    Console.WriteLine("Login Successfully");
+                    Console.WriteLine("     ");
+                    Console.WriteLine("WELCOME "+"   " +  rdr["N_name"]);
+                    Console.WriteLine("     ");
+                    Console.WriteLine("     ");
+                    Vehicle vref = new Car(); //Upcasting
+                    vref.ChooseDestination();
+                }
+            }
+        }
+    
+        else
+        {
+            Console.Error.WriteLine("INVALID CREDENTIAL");
+            Login();
+        }
+    }
+}
+
+public class NewUser : MainClass
+{
+    public static bool CheckedUsername(string uname)
+    {
+        for (int i = 0; i < uname.Length; i++)
+        {
+            if (uname[i] >= '0' && uname[i] <= '9')
+            {
+                return false;
+            }
+            else if (uname[i] == '@' || uname[i] == '#' || uname[i] == '$' || uname[i] == '&')
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool CheckedPassword(string pword)
+    {
+        bool upperCase = false;
+        bool lowerCase = false;
+        bool number = false;
+        bool specialCharacter = false;
+        for (int i = 0; i < pword.Length; i++)
+        {
+            if (pword[i] >= 'A' && pword[i] <= 'Z')
+            {
+                upperCase = true;
+            }
+            else if (pword[i] >= 'a' && pword[i] <= 'z')
+            {
+                lowerCase = true;
+            }
+            else if (pword[i] >= '0' && pword[i] <= '9')
+            {
+                number = true;
+            }
+            else if (pword[i] == '@' || pword[i] == '#' || pword[i] == '$' || pword[i] == '&')
+            {
+                specialCharacter = true;
+            }
+        }
+        return upperCase && lowerCase && number && specialCharacter;
+    }
+
+    public static bool PhoneNumber(long phoneNumber)
+    {
+        int count = 0;
+        while (phoneNumber != 0)
+        {
+            count++;
+            phoneNumber = phoneNumber / 10;
+        }
+        return count == 10;
+    }
+
+    public void SignUp()
+    {
+        string usName;
+        string emailId;
+        long phnNumber;
+        string passWord;
+        string cPassWord;
+        Console.WriteLine("Enter Username");
+         usName = Console.ReadLine();
+        bool usCheck = CheckedUsername(usName);
+        Console.WriteLine("Enter EmailID");
+         emailId = Console.ReadLine();
+        Console.WriteLine("Enter Phonenumber");
+           phnNumber = Convert.ToInt64(Console.ReadLine());
+       bool phnNumberCheck = PhoneNumber(phnNumber);
+        Console.WriteLine("Create Password");
+         passWord = Console.ReadLine();
+        Console.WriteLine("confirm Password");
+         cPassWord = Console.ReadLine();
+        bool pass = CheckedPassword(cPassWord);
+        if (passWord.Equals(cPassWord) && pass && usCheck && phnNumberCheck) 
+        { 
+
+            conn.Open();
+             String q = "insert into usr(N_name,N_email,N_phone,N_create,N_Confirm) values('"+ usName + "','"+emailId+"','"+ phnNumber + "','"+passWord+"','"+ cPassWord + "')";
+            SqlCommand cmd = new SqlCommand(q, conn);
+
+            int row = cmd.ExecuteNonQuery();
+
+            conn.Close();
+               
+            
+
+
+
+            Vehicle vref = new Car();
+            vref.ChooseDestination();
+        }
+        else
+        {
+            Console.WriteLine("Invalid Login Credential");
+            SignUp();
+        }
+    }
+}
+
+public abstract class Vehicle
+{
+
+    
+
+    protected static String storeLocation ;
+    protected static String ride;
+    static string CurrentLocation = "Thane";
+       public void ChooseDestination()
+    {
+        Console.WriteLine("Current Location:" + CurrentLocation);
+        Console.WriteLine("Choose Your Destination");
+        Console.WriteLine("------------------------------------------------------------");
+        Console.WriteLine("OUR SERVICE AVAILABLE IN THIS AREA");
+        Console.WriteLine("1" + "->MUMBAI");
+        Console.WriteLine("2" + "->AMBERNATH");
+        Console.WriteLine("3" + "->BHIWANDI");
+        Console.WriteLine("4" + "->GHATKOPER");
+        Console.WriteLine("5" + "->Exit");
+        int n = Convert.ToInt32(Console.ReadLine());
+        if (n == 1 || n == 2 || n == 3 || n == 4)
+        {
+            //if (n == 1)
+            //{
+            //    storeLocation = "mumbai";
+            //}
+            //else if (n == 2)
+            //{
+             //   storeLocation = "AmBERNATH";
+            //}
+            //else if (n == 3)
+           // {
+             //   storeLocation = "BHIDTH";
+          //  }
+            //else if (n == 4)
+            //{
+              //  storeLocation = "GHATKOJRATH";
+            //}
+            Console.WriteLine(storeLocation);
+            Console.WriteLine("Searching For Vehicle");
+            Console.WriteLine("*");
+            Console.WriteLine("*");
+            Thread.Sleep(500);
+            Console.WriteLine("*");
+            Console.WriteLine("*");
+            Console.WriteLine("*");
+            
+            Console.WriteLine("Available vehicle");
+            Console.WriteLine("1" + "->Car");
+            Console.WriteLine("2" + "->Auto");
+            int vehicle = Convert.ToInt32(Console.ReadLine());
+            switch (vehicle)
+            {
+                case 1:
+                    Car caref = new Car();
+                    caref.BookRide();
+                    break;
+                case 2:
+                    Auto aref = new Auto();
+                    aref.BookRide();
+                    break;
+                default:
+                    ChooseDestination();
+                    break;
+            }
+        }
+        else
+        {
+            Environment.Exit(1);
+        }
+    }
+
+    public abstract void BookRide();
+}
+
+public class Car : Vehicle
+{
+    public override void BookRide()
+    {
+        Console.WriteLine("Car Available");
+        Console.WriteLine("1" + "->SUV");
+        Console.WriteLine("2" + "->SEDAN");
+        Console.WriteLine("3" + "->PRIME");
+        Console.Error.WriteLine("4" + "->Go back");
+        int car = Convert.ToInt32(Console.ReadLine());
+        if (car == 1)
+        {
+           Vehicle.ride = "SUV";
+            Console.WriteLine("Total Fare = 200");
+            Console.WriteLine("Are You Ready For This Ride");
+            Console.WriteLine("Press 1" + "For Confirm Booking");
+            Console.WriteLine("Press 2" + "For Cancel");
+            int confirmCar = Convert.ToInt32(Console.ReadLine());
+            if (confirmCar == 1)
+            {
+                Console.WriteLine("Your Ride Confirm:::::::::Thank you");
+                Console.WriteLine(Vehicle.ride);
+               
+            }
+            else
+            {
+                BookRide();
+            }
+        }
+        else if (car == 2)
+        {
+            Vehicle.ride = "SEDAN";
+            Console.WriteLine("Total Fare = 240");
+            Console.WriteLine("Are You Ready For This Ride");
+            Console.WriteLine("Press 1" + "For Confirm Booking");
+            Console.WriteLine("Press 2" + "For Cancel");
+            int confirmCar = Convert.ToInt32(Console.ReadLine());
+            if (confirmCar == 1)
+            {
+                Console.WriteLine("Your Ride Confirm:::::::::Thank you");
+            }
+            else
+            {
+                BookRide();
+            }
+        }
+        else if (car == 3)
+        {
+            Vehicle.ride = "PRIME";
+            Console.WriteLine("Total Fare = 330");
+            Console.WriteLine("Are You Ready For This Ride");
+            Console.WriteLine("Press 1" + "For Confirm Booking");
+            Console.WriteLine("Press 2" + "For Cancel");
+            int confirmCar = Convert.ToInt32(Console.ReadLine());
+            if (confirmCar == 1)
+            {
+                Console.WriteLine("Your Ride Confirm:::::::::Thank you");
+                
+            }
+       
+            else
+            {
+                BookRide();
+            }
+        }
+        else
+        {
+            ChooseDestination();
+        }
+    }
+}
+//public class Thank 
+//{
+    //public static void Thanks()
+    //{
+    //    Console.WriteLine("This is your booking Deatils");
+
+
+  //  }
+//}
+public class Auto : Vehicle
+{
+    public override void BookRide()
+    {
+        Console.WriteLine("Auto Available");
+        Console.WriteLine("1" + "Electric Auto");
+        Console.WriteLine("2" + "Gas Auto");
+        Console.Error.WriteLine("3" + "Go back");
+        int auto = Convert.ToInt32(Console.ReadLine());
+        if (auto == 1)
+        {
+            Console.WriteLine("Total Fare = 20");
+            Console.WriteLine("Are You Ready For This Ride");
+            Console.WriteLine("Press 1 For Confirm Booking");
+            Console.WriteLine("Press 2 For Cancel");
+            int confirmAuto = Convert.ToInt32(Console.ReadLine());
+            if (confirmAuto == 1)
+            {
+                Console.WriteLine("Your Ride Confirm:::::::::Thank you");
+            }
+            else
+            {
+                BookRide();
+            }
+        }
+        else if (auto == 2)
+        {
+            Console.WriteLine("Total Fare = 20");
+            Console.WriteLine("Are You Ready For This Ride");
+            Console.WriteLine("Press 1 For Confirm Booking");
+            Console.WriteLine("Press 2 For Cancel");
+            int confirmAuto = Convert.ToInt32(Console.ReadLine());
+            if (confirmAuto == 1)
+            {
+                Console.WriteLine("Your Ride Confirm:::::::::Thank you");
+                
+            }
+            else if(confirmAuto == 2)
+            {
+                BookRide();
+            }
+        }
+        else
+        {
+            ChooseDestination();
+        }
+    }
+    }
+
